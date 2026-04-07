@@ -254,7 +254,7 @@ function RoadmapCard({
   return (
     <div
       className={[
-        "group relative flex h-full min-h-12 items-center justify-center overflow-visible rounded-[18px] border px-3 py-2 text-center text-[11px] font-semibold tracking-tight shadow-[0_10px_24px_rgba(2,8,23,0.22)] backdrop-blur sm:min-h-14 sm:text-xs",
+        "group relative flex h-full min-h-12 items-center justify-center overflow-visible rounded-[18px] px-3 py-2 text-center text-[11px] font-semibold tracking-tight shadow-[0_10px_24px_rgba(2,8,23,0.22)] backdrop-blur sm:min-h-14 sm:text-xs",
         status === "active"
           ? "border-[#e8ab82] bg-[#f3d2bc] text-[#111827]"
           : "border-[#9eb8e6] bg-[#e7ebf2] text-[#111827]",
@@ -376,11 +376,11 @@ export default function Home() {
                 <th className="w-[30%] rounded-tl-[18px] bg-[#f2f3f5] p-4 align-middle">
                   <div className="flex flex-wrap items-center justify-center gap-5 text-[11px] font-semibold text-[#1247ab] sm:text-xs">
                     <div className="flex items-center gap-2">
-                      <span className="h-5 w-16 rounded-md border border-[#e8ab82] bg-[#f3d2bc]" />
+                      <span className="h-5 w-16 rounded-md bg-[#f3d2bc]" />
                       已开源或研发完毕
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="h-5 w-16 rounded-md border border-[#9eb8e6] bg-[#e7ebf2]" />
+                      <span className="h-5 w-16 rounded-md bg-[#e7ebf2]" />
                       即将发布
                     </div>
                   </div>
@@ -447,31 +447,39 @@ export default function Home() {
                   ))}
                 </tr>
               ))}
+              <tr>
+                <td className="bg-[#f2f3f5] p-3 align-middle">
+                  <div className="grid gap-2.5">
+                    {platformRows.map((row) => (
+                      <div
+                        key={row.lead}
+                        className="flex h-full min-h-12 items-center justify-center overflow-visible rounded-[18px] bg-[#1543ad] px-3 py-2 text-center text-[11px] font-semibold tracking-tight text-white sm:min-h-14 sm:text-lg"
+                      >
+                        {row.lead}
+                      </div>
+                    ))}
+                  </div>
+                </td>
+                {platformRows[0].items.map((_, itemIndex) => (
+                  <td
+                    key={`platform-col-${itemIndex}`}
+                    className="bg-[#f2f3f5] p-3 align-middle"
+                  >
+                    <div className="grid gap-2.5">
+                      {platformRows.map((row) => (
+                        <div
+                          key={`${row.lead}-${row.items[itemIndex]}`}
+                          className="flex h-full min-h-12 items-center justify-center overflow-visible rounded-[18px] bg-[#f3d2bc] px-3 py-2 text-center text-[11px] font-semibold tracking-tight shadow-[0_10px_24px_rgba(2,8,23,0.22)] backdrop-blur text-[#111827] sm:min-h-14 sm:text-xs"
+                        >
+                          {row.items[itemIndex]}
+                        </div>
+                      ))}
+                    </div>
+                  </td>
+                ))}
+              </tr>
             </tbody>
           </table>
-        </div>
-      </section>
-
-      <section className="rounded-[30px] bg-[#f2f3f5] p-4 shadow-[0_10px_30px_rgba(2,8,23,0.18)] sm:p-5">
-        <div className="grid gap-4">
-          {platformRows.map((row) => (
-            <div
-              key={row.lead}
-              className="grid gap-3 lg:grid-cols-[280px_1fr_1fr_1fr]"
-            >
-              <div className="flex items-center justify-center rounded-[14px] bg-[#1543ad] px-4 py-4 text-center text-xl font-semibold text-white">
-                {row.lead}
-              </div>
-              {row.items.map((item) => (
-                <div
-                  key={item}
-                  className="flex min-h-20 items-center justify-center rounded-[14px] border border-[#e8ab82] bg-[#f3d2bc] px-4 py-3 text-center text-lg font-semibold text-[#111827]"
-                >
-                  {item}
-                </div>
-              ))}
-            </div>
-          ))}
         </div>
       </section>
 
