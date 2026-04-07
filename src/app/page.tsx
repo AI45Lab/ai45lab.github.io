@@ -301,7 +301,7 @@ export default function Home() {
         <div className="grid items-center gap-10 lg:grid-cols-[1.15fr_0.85fr]">
           <div className="flex h-[320px] flex-col justify-between">
             <span className="w-fit inline-flex rounded-full border border-[#2f5ea8] bg-[#0a1730] px-4 py-1 text-sm font-semibold tracking-[0.24em] text-[#7dd3fc] uppercase shadow-[0_0_0_1px_rgba(56,189,248,0.08)]">
-              AI Agent Security Toolbox
+              AI Agent Safety Toolbox
             </span>
             <h1 className="max-w-4xl text-3xl font-semibold leading-tight tracking-tight text-white sm:text-4xl lg:text-5xl">
               面向智能体全生命周期的
