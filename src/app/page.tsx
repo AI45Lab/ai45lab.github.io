@@ -294,7 +294,7 @@ export default function Home() {
   }));
 
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-7xl flex-col gap-10 px-4 py-6 sm:px-6 lg:px-8">
+    <main className="mx-auto flex min-h-screen w-full max-w-7xl flex-col gap-10 lg:px-8 p-0 sm:p-4">
       <section className="relative overflow-hidden rounded-[36px] bg-[linear-gradient(145deg,rgba(4,11,24,0.98),rgba(2,7,18,0.99))] px-6 py-10 shadow-[0_30px_120px_rgba(2,8,23,0.78)] backdrop-blur sm:px-10 sm:py-14">
         <div className="pointer-events-none absolute -left-20 top-10 h-64 w-64 rounded-full bg-[#2563eb]/20 blur-3xl" />
         <div className="pointer-events-none absolute bottom-0 right-0 h-72 w-72 rounded-full bg-[#0ea5e9]/10 blur-3xl" />
@@ -368,12 +368,12 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="rounded-[30px] bg-[#f2f3f5] p-4 shadow-[0_10px_30px_rgba(2,8,23,0.18)] sm:p-6">
-        <div>
-          <table className="w-full min-w-[980px] border-separate border-spacing-0">
+      <div className="w-full overflow-hidden flex justify-center sm:rounded-[30px]">
+        <div className="flex-shrink-0 origin-top scale-[0.385] sm:scale-100 w-[980px] sm:w-full mb-[-125%] sm:mb-0">
+          <table className="w-full border-separate border-spacing-0">
             <thead>
               <tr>
-                <th className="w-[30%] rounded-tl-[18px] bg-[#f2f3f5] p-4 align-middle">
+                <th className="w-[30%] bg-[#f2f3f5] p-4 align-middle">
                   <div className="flex flex-wrap items-center justify-center gap-5 text-[11px] font-semibold text-[#1247ab] sm:text-xs">
                     <div className="flex items-center gap-2">
                       <span className="h-5 w-16 rounded-md bg-[#f3d2bc]" />
@@ -390,9 +390,6 @@ export default function Home() {
                     key={column.title}
                     className={[
                       "w-[23.33%] bg-[#f2f3f5] p-3 align-middle",
-                      index === roadmapColumns.length - 1
-                        ? "rounded-tr-[18px]"
-                        : "",
                     ].join(" ")}
                   >
                     <div className="rounded-[14px] bg-[#1543ad] px-4 py-2.5 text-center text-lg font-semibold text-white">
@@ -481,7 +478,7 @@ export default function Home() {
             </tbody>
           </table>
         </div>
-      </section>
+      </div>
 
       <section className="grid gap-6">
         {toolboxSections.map((section) => (
