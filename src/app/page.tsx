@@ -368,8 +368,8 @@ export default function Home() {
         </div>
       </section>
 
-      <div className="w-full overflow-hidden flex justify-center sm:rounded-[30px]">
-        <div className="flex-shrink-0 origin-top scale-[0.385] sm:scale-100 w-[980px] sm:w-full mb-[-125%] sm:mb-0">
+      <div className="w-full overflow-hidden flex justify-center sm:rounded-[30px] pb-20 sm:pb-0">
+        <div className="flex-shrink-0 origin-top scale-[0.385] sm:scale-100 w-[980px] sm:w-full mb-[-110%] sm:mb-0">
           <table className="w-full border-separate border-spacing-0">
             <thead>
               <tr>
