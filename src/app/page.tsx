@@ -1,15 +1,27 @@
+"use client";
+
+import { useCallback, useEffect, useRef, useState } from "react";
+
 const riskGroups = [
   {
-    title: "面向远端风险",
-    items: ["社会认知操纵", "群体智能失控", "深度合成滥用", "技术伦理失范"],
-  },
-  {
-    title: "面向中端风险",
-    items: ["鲁棒性实效", "算法内生缺陷", "认知一致性", "供应链与环境漏洞"],
-  },
-  {
-    title: "面向近端风险",
-    items: ["隐私泄露", "生成内容合规", "数据投毒", "越狱攻击"],
+    items: [
+      "工具投毒",
+      "指令注入",
+      "越权访问",
+      "自主渗透",
+      "沙箱逃逸",
+      "提示注入",
+      "诱导攻击",
+      "权限窃取",
+      "隐私泄露",
+      "数据投毒",
+      "GEO数据污染",
+      "知识幻觉",
+      "不可审计",
+      "CBRN风险",
+      "算力DDoS",
+      "多智能体共谋",
+    ],
   },
 ] as const;
 
@@ -17,67 +29,74 @@ const roadmapColumns = [
   {
     title: "安全测试工具",
     items: [
-      { name: "Oasis百万智能体模拟", status: "active" },
-      { name: "即将发布", status: "soon" },
+      {
+        name: "复杂场景风险演练场",
+        status: "active",
+        subItems: [
+          { id: "oasis", name: "社交网络Oasis" },
+          { id: "ghostei", name: "手机 GhostEI" },
+          { id: "riosworld", name: "电脑RiosWorld" },
+          { id: "safeverse", name: "具身孪生SafeVerse" },
+          { id: "clawreverse", name: "龙虾ClawReverse" },
+        ],
+      },
       { id: "openrt", name: "OpenRT一站式红队", status: "active" },
-      { name: "复杂环境实战演练场", status: "active" },
       { id: "deepsight", name: "DeepSight 评测诊断", status: "active" },
-      { name: "即将发布", status: "soon" },
     ],
   },
   {
     title: "可信数据服务",
     items: [
       { name: "即将发布", status: "soon" },
-      { name: "即将发布", status: "soon" },
       { id: "dataelf", name: "DataElf数据安全精灵", status: "active" },
       { id: "riskdb", name: "开源智能体风险数据库", status: "active" },
-      { id: "multilingual", name: "跨语种价值语料库", status: "active" },
       { id: "unimark", name: "AI内容标识开发套件 Unimark", status: "active" },
     ],
   },
   {
     title: "加固防御技术",
     items: [
-      { name: "即将发布", status: "soon" },
-      { id: "trinityguard", name: "群智 Trinity Guard", status: "active" },
+      { id: "trinityguard", name: "群体智能 Trinity Guard", status: "active" },
       { id: "agentdog", name: "AgentDoG 安全防御套件", status: "active" },
       { id: "clawsentry", name: "智能体安全员 ClawSentry", status: "active" },
       { id: "safework-r1", name: "SafeWork-R1 安全模型", status: "active" },
-      {
-        id: "security-rl",
-        name: "安全加固强化学习方法",
-        status: "active",
-      },
     ],
   },
 ] as const;
 
 const platformRows = [
   {
-    lead: "Safactory 安全基座框架",
+    lead: "Safactory 安全工厂框架",
     items: ["风险推演中台", "可信数据中台", "加固防御中台"],
   },
   {
-    lead: "DeepLink 国产智算技术",
-    items: ["大规模池化可信推理", "分布式分层数据存储", "国产异构训练工具链"],
+    lead: "DeepLink超智融合技术",
+    items: ["大规模池化可信推理", "分布式分层数据存储", "超智融合训练技术"],
   },
 ] as const;
 
 const toolboxSections = [
   {
-    title: "安全测试工具",
+    title: "安全测试",
     description:
       "覆盖红队测试、评测诊断与复杂环境演练，帮助团队从风险暴露走向根因定位。",
     accent: "from-[#1d4ed8] to-[#2563eb]",
     items: [
+      {
+        id: "oasis",
+        name: "Oasis",
+        subtitle: "百万智能体模拟",
+        href: "https://github.com/camel-ai/oasis",
+        summary:
+          "面向大规模社会智能体交互的模拟平台，支持百万级智能体在社交环境中运行，用于观察信息传播、群体极化和涌现行为。",
+      },
       {
         id: "deepsight",
         name: "DeepSight",
         subtitle: "评测诊断框架",
         href: "https://ai45.shlab.org.cn/deepsight",
         summary:
-          "提出“评测-诊断”一体化新范式，提供从风险暴露到根因定位的完整工具链，推动大模型安全从黑盒评估迈向白盒治理。",
+          "提出“评测-诊断”一体化新范式，提供从风险暴露到根因定位的完整链路，推动大模型安全从黑盒评估迈向白盒治理。",
       },
       {
         id: "openrt",
@@ -88,6 +107,7 @@ const toolboxSections = [
           "标准模块化设计，集成 43 种业界攻击方法，用户仅需一行命令即可完成从攻击编排到报告输出的完整流程。",
       },
       {
+        id: "ghostei",
         name: "GhostEI",
         subtitle: "手机智能体评估",
         href: "https://github.com/AI45Lab/Ghost-EI",
@@ -95,6 +115,7 @@ const toolboxSections = [
           "首个面向安卓恶意环境注入的安全评估框架，涵盖欺骗性指令、动静态环境注入等攻击向量，支持自动化快速评测。",
       },
       {
+        id: "riosworld",
         name: "RiosWorld",
         subtitle: "computer Use智能体评估",
         href: "https://github.com/AI45Lab/RiOSWorld",
@@ -102,6 +123,7 @@ const toolboxSections = [
           "首个 Computer-Use Agent 安全评估沙箱，包含 492 个风险测试案例，基于 OSworld 仿真环境实现自动化评测。",
       },
       {
+        id: "safeverse",
         name: "SafeVerse",
         subtitle: "具身智能体评估",
         href: "https://github.com/AI45Lab/SafeVerse",
@@ -109,11 +131,20 @@ const toolboxSections = [
           "面向具身智能的实战化数字孪生演练场，支持将物理世界复刻为 3D 仿真环境，完成“重建-攻防-进化”全闭环评测。",
       },
       {
+        id: "clawreverse",
         name: "ClawReverse",
         subtitle: "风险回溯沙箱",
-        href: "https://github.com/OpenKILab/ClawReverse",
+        href: "https://github.com/AI45Lab/ClawReverse",
         summary:
           "为 Agent 会话和文件安装“存档系统”，支持随时回滚与分叉试错，显著节省复杂任务中的 Token 消耗。",
+      },
+      {
+        id: "is-bench",
+        name: "IS-Bench",
+        subtitle: "交互式具身安全评测",
+        href: "https://github.com/AI45Lab/IS-Bench",
+        summary:
+          "面向日常家庭任务中的 VLM 具身智能体，提供高保真交互场景，用过程式评估检查智能体是否能先识别并规避动态风险。",
       },
     ],
   },
@@ -169,7 +200,7 @@ const toolboxSections = [
         subtitle: "智能体防御套件",
         href: "https://github.com/AI45Lab/AgentDoG",
         summary:
-          "首创三维风险分类体系，性能优于 GPT-5.2 等顶尖模型，依托万级工具训练流水线实现决策全链路可追溯。",
+          "首创三维风险分类体系，性能优于 GPT-5.2 等顶尖模型，依托万级能力训练流水线实现决策全链路可追溯。",
       },
       {
         id: "clawsentry",
@@ -200,7 +231,7 @@ const toolboxSections = [
         subtitle: "安全基座框架",
         href: undefined,
         summary:
-          "模块化融合全栈安全工具，支持国产私有部署。支持数千智能体同时实战压测，独创 ClawReverse 分支回溯沙箱，支持风险节点自动分叉与经验库持续沉淀。",
+          "模块化融合全栈安全能力，支持国产私有部署。支持数千智能体同时实战压测，独创 ClawReverse 分支回溯沙箱，支持风险节点自动分叉与经验库持续沉淀。",
       },
     ],
   },
@@ -211,6 +242,11 @@ type ToolCardData = {
   subtitle: string;
   href?: string;
   summary: string;
+};
+
+type RoadmapSubItem = {
+  name: string;
+  tooltip?: ToolCardData;
 };
 
 function ToolInfoCard({ item }: { item: ToolCardData }) {
@@ -246,24 +282,47 @@ function RoadmapCard({
   name,
   status,
   tooltip,
+  subItems,
+  onTooltipOpen,
+  onTooltipClose,
 }: {
   name: string;
   status: "active" | "soon";
   tooltip?: ToolCardData;
+  subItems?: RoadmapSubItem[];
+  onTooltipOpen?: (item: ToolCardData) => void;
+  onTooltipClose?: () => void;
 }) {
   return (
     <div
+      onMouseEnter={tooltip ? () => onTooltipOpen?.(tooltip) : undefined}
+      onMouseLeave={tooltip ? onTooltipClose : undefined}
       className={[
-        "group relative flex h-full min-h-12 items-center justify-center overflow-visible rounded-[18px] px-3 py-2 text-center text-[11px] font-semibold tracking-tight shadow-[0_10px_24px_rgba(2,8,23,0.22)] backdrop-blur sm:min-h-14 sm:text-xs",
+        "relative flex h-full min-h-16 flex-col items-center justify-center overflow-visible rounded-[18px] px-4 py-3 text-center text-sm font-semibold leading-snug tracking-tight shadow-[0_10px_24px_rgba(2,8,23,0.18)] backdrop-blur sm:min-h-[76px] sm:text-base",
         status === "active"
           ? "border-[#e8ab82] bg-[#f3d2bc] text-[#111827]"
           : "border-[#9eb8e6] bg-[#e7ebf2] text-[#111827]",
       ].join(" ")}
     >
-      {name}
-      {tooltip ? (
-        <div className="text-left absolute pb-3 bottom-full right-0 z-40 w-[520px] transition-[opacity,visibility] opacity-0 group-hover:opacity-100 invisible group-hover:visible pointer-events-none group-hover:pointer-events-auto">
-          <ToolInfoCard item={tooltip} />
+      <span>{name}</span>
+      {subItems?.length ? (
+        <div className="mt-3 flex w-full flex-wrap justify-center gap-1.5">
+          {subItems.map((subItem) => (
+            <div
+              key={subItem.name}
+              className="relative"
+              onMouseEnter={
+                subItem.tooltip
+                  ? () => onTooltipOpen?.(subItem.tooltip as ToolCardData)
+                  : undefined
+              }
+              onMouseLeave={subItem.tooltip ? onTooltipClose : undefined}
+            >
+              <span className="flex min-h-7 min-w-[76px] items-center justify-center rounded-[10px] bg-white/35 px-1.5 py-1 text-[10px] font-semibold leading-tight text-[#17428d] ring-1 ring-white/30 sm:text-[11px]">
+                {subItem.name}
+              </span>
+            </div>
+          ))}
         </div>
       ) : null}
     </div>
@@ -271,6 +330,34 @@ function RoadmapCard({
 }
 
 export default function Home() {
+  const [activeTooltip, setActiveTooltip] = useState<ToolCardData | null>(null);
+  const tooltipCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const cancelTooltipClose = useCallback(() => {
+    if (tooltipCloseTimer.current) {
+      clearTimeout(tooltipCloseTimer.current);
+      tooltipCloseTimer.current = null;
+    }
+  }, []);
+
+  const openTooltip = useCallback(
+    (item: ToolCardData) => {
+      cancelTooltipClose();
+      setActiveTooltip(item);
+    },
+    [cancelTooltipClose],
+  );
+
+  const closeTooltip = useCallback(() => {
+    cancelTooltipClose();
+    tooltipCloseTimer.current = setTimeout(() => {
+      setActiveTooltip(null);
+      tooltipCloseTimer.current = null;
+    }, 180);
+  }, [cancelTooltipClose]);
+
+  useEffect(() => cancelTooltipClose, [cancelTooltipClose]);
+
   const tooltipById: Record<string, ToolCardData> = {};
 
   for (const section of toolboxSections) {
@@ -286,12 +373,14 @@ export default function Home() {
     }
   }
 
-  const rowGroups = riskGroups.map((riskGroup, rowIndex) => ({
-    risk: riskGroup,
-    columns: roadmapColumns.map((column) =>
-      column.items.slice(rowIndex * 2, rowIndex * 2 + 2),
+  const roadmapTrackCount = Math.max(
+    ...roadmapColumns.map((column) =>
+      column.items.reduce(
+        (trackCount, item) => trackCount + ("subItems" in item ? 2 : 1),
+        0,
+      ),
     ),
-  }));
+  );
 
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-7xl flex-col gap-10 lg:px-8 p-0 sm:p-4">
@@ -301,12 +390,12 @@ export default function Home() {
         <div className="grid items-center gap-10 lg:grid-cols-[1.15fr_0.85fr]">
           <div className="flex h-[320px] flex-col justify-between">
             <span className="w-fit inline-flex rounded-full border border-[#2f5ea8] bg-[#0a1730] px-4 py-1 text-sm font-semibold tracking-[0.24em] text-[#7dd3fc] uppercase shadow-[0_0_0_1px_rgba(56,189,248,0.08)]">
-              AI Agent Safety Toolbox
+              AI Agent Safety Suite
             </span>
             <h1 className="max-w-4xl text-3xl font-semibold leading-tight tracking-tight text-white sm:text-4xl lg:text-5xl">
               面向智能体全生命周期的
               <span className="block bg-gradient-to-r from-[#7dd3fc] via-[#60a5fa] to-[#3b82f6] bg-clip-text text-transparent">
-                安全工具箱介绍页
+                安全能力介绍页
               </span>
             </h1>
             <p className="max-w-3xl text-base leading-7 text-slate-300">
@@ -333,7 +422,7 @@ export default function Home() {
                   14+
                 </p>
                 <p className="mt-2 overflow-hidden text-ellipsis whitespace-nowrap text-base text-[#d6e5ff]">
-                  核心工具与能力模块
+                  核心能力模块
                 </p>
               </div>
               <div className="flex h-full flex-col items-center justify-center px-4 text-center">
@@ -354,10 +443,10 @@ export default function Home() {
               </div>
               <div className="flex h-full flex-col items-center justify-center px-4 text-center">
                 <p className="text-4xl font-semibold tracking-tight text-[#e8f2ff]">
-                  9
+                  150+
                 </p>
                 <p className="mt-2 overflow-hidden text-ellipsis whitespace-nowrap text-base text-[#d6e5ff]">
-                  平台与中台能力节点
+                  细分工具类型
                 </p>
               </div>
             </div>
@@ -368,28 +457,28 @@ export default function Home() {
         </div>
       </section>
 
-      <div className="w-full overflow-hidden flex justify-center sm:rounded-[30px] pb-20 sm:pb-0">
-        <div className="flex-shrink-0 origin-top scale-[0.385] sm:scale-100 w-[980px] sm:w-full mb-[-110%] sm:mb-0">
+      <div className="w-full overflow-visible flex justify-center sm:rounded-[30px] pb-20 sm:pb-0">
+        <div className="flex-shrink-0 origin-top w-full max-sm:mb-[-110%] max-sm:w-[980px] max-sm:scale-[0.385]">
           <table className="w-full border-separate border-spacing-0">
             <thead>
               <tr>
-                <th className="w-[30%] bg-[#f2f3f5] p-4 align-middle">
-                  <div className="flex flex-wrap items-center justify-center gap-5 text-[11px] font-semibold text-[#1247ab] sm:text-xs">
+                <th className="w-[22%] bg-[#f2f3f5] p-3 align-middle">
+                  <div className="mx-auto flex max-w-[280px] flex-col items-start gap-3 text-[11px] font-semibold text-[#1247ab] sm:text-xs">
                     <div className="flex items-center gap-2">
-                      <span className="h-5 w-16 rounded-md bg-[#f3d2bc]" />
+                      <span className="h-5 w-12 rounded-md bg-[#f3d2bc]" />
                       已开源或研发完毕
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="h-5 w-16 rounded-md bg-[#e7ebf2]" />
+                      <span className="h-5 w-12 rounded-md bg-[#e7ebf2]" />
                       即将发布
                     </div>
                   </div>
                 </th>
-                {roadmapColumns.map((column, index) => (
+                {roadmapColumns.map((column) => (
                   <th
                     key={column.title}
                     className={[
-                      "w-[23.33%] bg-[#f2f3f5] p-3 align-middle",
+                      "w-[26%] bg-[#f2f3f5] p-3 align-middle",
                     ].join(" ")}
                   >
                     <div className="rounded-[14px] bg-[#1543ad] px-4 py-2.5 text-center text-lg font-semibold text-white">
@@ -400,57 +489,71 @@ export default function Home() {
               </tr>
             </thead>
             <tbody>
-              {rowGroups.map((groupRow, rowIndex) => (
-                <tr key={groupRow.risk.title}>
-                  <td className="bg-[#f2f3f5] p-4 align-middle">
-                    <div className="grid gap-3 sm:grid-cols-[170px_1fr]">
-                      <div className="flex items-center justify-center">
-                        <h2 className="text-xl font-semibold leading-tight text-[#1247ab] sm:text-2xl">
-                          {groupRow.risk.title}
-                        </h2>
-                      </div>
-                      <div className="grid gap-2">
-                        {groupRow.risk.items.map((item) => (
-                          <div
-                            key={item}
-                            className="flex min-h-7 items-center justify-center rounded-md bg-[#d5dfef] px-2.5 py-1 text-center text-xs font-semibold text-[#4d70b4]"
-                          >
-                            <span>{item}</span>
-                          </div>
-                        ))}
-                      </div>
+              <tr>
+                <td className="bg-[#f2f3f5] p-3 align-top">
+                  <div className="mx-auto grid max-w-[280px] gap-3">
+                    <div className="grid grid-cols-2 gap-2">
+                      {riskGroups[0].items.map((item) => (
+                        <div
+                          key={item}
+                          className="flex min-h-8 items-center justify-center rounded-[10px] bg-[#d5dfef] px-2 py-1.5 text-center text-[12px] font-semibold leading-snug text-[#3f6fb8] sm:min-h-[34px] sm:text-sm"
+                        >
+                          <span>{item}</span>
+                        </div>
+                      ))}
                     </div>
-                  </td>
-                  {groupRow.columns.map((cellItems, cellIndex) => (
-                    <td
-                      key={`${groupRow.risk.title}-${cellIndex}`}
-                      className="bg-[#f2f3f5] p-3 align-middle"
+                  </div>
+                </td>
+                {roadmapColumns.map((column) => (
+                  <td
+                    key={column.title}
+                    className="bg-[#f2f3f5] p-3 align-top"
+                  >
+                    <div
+                      className="grid h-full gap-2.5"
+                      style={{
+                        gridTemplateRows: `repeat(${roadmapTrackCount}, minmax(0, 1fr))`,
+                      }}
                     >
-                      <div className="grid gap-2.5">
-                        {cellItems.map((item, itemIndex) => (
+                      {column.items.map((item, itemIndex) => (
+                        <div
+                          key={`${column.title}-${item.name}-${itemIndex}`}
+                          style={{
+                            gridRow: `span ${"subItems" in item ? 2 : 1}`,
+                          }}
+                        >
                           <RoadmapCard
-                            key={`${roadmapColumns[cellIndex]?.title}-${item.name}-${rowIndex}-${itemIndex}`}
                             name={item.name}
                             status={item.status}
+                            onTooltipOpen={openTooltip}
+                            onTooltipClose={closeTooltip}
                             tooltip={
                               "id" in item && item.id
                                 ? tooltipById[item.id]
                                 : undefined
                             }
+                            subItems={
+                              "subItems" in item
+                                ? item.subItems.map((subItem) => ({
+                                    name: subItem.name,
+                                    tooltip: tooltipById[subItem.id],
+                                  }))
+                                : undefined
+                            }
                           />
-                        ))}
-                      </div>
-                    </td>
-                  ))}
-                </tr>
-              ))}
+                        </div>
+                      ))}
+                    </div>
+                  </td>
+                ))}
+              </tr>
               <tr>
                 <td className="bg-[#f2f3f5] p-3 align-middle">
                   <div className="grid gap-2.5">
                     {platformRows.map((row) => (
                       <div
                         key={row.lead}
-                        className="flex h-full min-h-12 items-center justify-center overflow-visible rounded-[18px] bg-[#1543ad] px-3 py-2 text-center text-[11px] font-semibold tracking-tight text-white sm:min-h-14 sm:text-lg"
+                        className="flex h-full min-h-16 items-center justify-center overflow-visible rounded-[20px] bg-[#1543ad] px-4 py-3 text-center text-sm font-semibold leading-snug tracking-tight text-white sm:min-h-[72px] sm:text-lg"
                       >
                         {row.lead}
                       </div>
@@ -466,7 +569,7 @@ export default function Home() {
                       {platformRows.map((row) => (
                         <div
                           key={`${row.lead}-${row.items[itemIndex]}`}
-                          className="flex h-full min-h-12 items-center justify-center overflow-visible rounded-[18px] bg-[#f3d2bc] px-3 py-2 text-center text-[11px] font-semibold tracking-tight shadow-[0_10px_24px_rgba(2,8,23,0.22)] backdrop-blur text-[#111827] sm:min-h-14 sm:text-xs"
+                          className="flex h-full min-h-16 items-center justify-center overflow-visible rounded-[20px] bg-[#f3d2bc] px-4 py-3 text-center text-sm font-semibold leading-snug tracking-tight shadow-[0_10px_24px_rgba(2,8,23,0.22)] backdrop-blur text-[#111827] sm:min-h-[72px] sm:text-base"
                         >
                           {row.items[itemIndex]}
                         </div>
@@ -479,6 +582,16 @@ export default function Home() {
           </table>
         </div>
       </div>
+
+      {activeTooltip ? (
+        <div
+          className="fixed left-1/2 top-6 z-[2147483647] w-[min(560px,calc(100vw-4rem))] -translate-x-1/2 text-left"
+          onMouseEnter={cancelTooltipClose}
+          onMouseLeave={closeTooltip}
+        >
+          <ToolInfoCard item={activeTooltip} />
+        </div>
+      ) : null}
 
       <section className="grid gap-6">
         {toolboxSections.map((section) => (
