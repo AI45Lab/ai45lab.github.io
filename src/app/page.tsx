@@ -435,7 +435,7 @@ export default function Home() {
             <h1 className="max-w-4xl text-3xl font-semibold leading-tight tracking-tight text-white sm:text-4xl lg:text-5xl">
               面向智能体全生命周期的
               <span className="block bg-gradient-to-r from-[#7dd3fc] via-[#60a5fa] to-[#3b82f6] bg-clip-text text-transparent">
-                安全工具箱“墨卫”
+                安全工具箱“墨铠”
               </span>
             </h1>
             <p className="max-w-3xl text-base leading-7 text-slate-300">
