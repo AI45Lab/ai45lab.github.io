@@ -84,8 +84,8 @@ const platformRows = [
       },
       {
         id: "safactory-defense",
-        name: "加固防御中台",
-        subtitle: "防御能力集成与验证",
+        name: "进化防御中台",
+        subtitle: "防御能力集成与安全自进化",
         href: "https://github.com/AI45Lab/Safactory",
         summary:
           "汇聚护栏、审查、对齐与运行时防御能力，为智能体应用提供策略配置、效果验证和安全闭环，推动防御能力从测试走向部署。",
@@ -93,11 +93,11 @@ const platformRows = [
     ],
   },
   {
-    lead: "DeepLink超智融合技术",
+    lead: "DeepLink 超智融合技术",
     items: [
       { id: undefined, name: "大规模池化可信推理", href: undefined },
       { id: undefined, name: "分布式分层数据存储", href: undefined },
-      { id: undefined, name: "超智融合训练技术", href: undefined },
+      { id: undefined, name: "超智融合训练框架", href: undefined },
     ],
   },
 ] as const;
@@ -330,34 +330,46 @@ function RoadmapCard({
   status,
   tooltipId,
   subItems,
+  tone = "tool",
 }: {
   name: string;
   status: "active" | "soon";
   tooltipId?: string;
   subItems?: RoadmapSubItem[];
+  tone?: "tool" | "platform";
 }) {
   return (
     <div
+      data-roadmap-card=""
       data-tooltip-id={tooltipId}
+      data-tooltip-anchor={tooltipId ? "" : undefined}
       className={[
-        "relative flex min-h-16 flex-col items-center justify-center overflow-visible rounded-[18px] px-4 py-3 text-center text-sm font-semibold leading-snug tracking-tight shadow-[0_10px_24px_rgba(2,8,23,0.18)] backdrop-blur sm:min-h-[76px] sm:text-base",
-        status === "active"
-          ? "border-[#e8ab82] bg-[#f3d2bc] text-[#111827]"
-          : "border-[#9eb8e6] bg-[#e7ebf2] text-[#111827]",
+        "relative flex flex-col items-center justify-center overflow-visible rounded-[16px] text-center text-sm font-semibold leading-snug tracking-tight shadow-[0_10px_24px_rgba(2,8,23,0.18)] backdrop-blur sm:text-base",
+        subItems?.length
+          ? "min-h-[92px] px-2 py-2 sm:min-h-[98px]"
+          : "min-h-14 px-3 py-2 sm:min-h-[62px]",
+        status === "soon"
+          ? "border-[#9eb8e6] bg-[#e7ebf2] text-[#111827]"
+          : tone === "tool"
+            ? "border-[#f1c784] bg-[#f7dfb8] text-[#111827]"
+            : "border-[#e8ab82] bg-[#f3d2bc] text-[#111827]",
       ].join(" ")}
     >
       <span>{name}</span>
+      <TooltipPopup tooltipId={tooltipId} />
       {subItems?.length ? (
-        <div className="mt-3 flex w-full flex-wrap justify-center gap-1.5">
+        <div className="mt-1.5 grid w-full grid-cols-3 gap-1">
           {subItems.map((subItem) => (
             <div
               key={subItem.name}
               className="relative"
               data-tooltip-id={subItem.tooltipId}
+              data-tooltip-anchor={subItem.tooltipId ? "" : undefined}
             >
-              <span className="flex min-h-8 min-w-[86px] items-center justify-center rounded-[10px] bg-white/35 px-2 py-1 text-[12px] font-semibold leading-tight text-[#17428d] ring-1 ring-white/30 sm:text-[13px]">
+              <span className="flex min-h-6 items-center justify-center rounded-[8px] bg-white/35 px-1 py-0.5 text-[11px] font-semibold leading-tight text-[#17428d] ring-1 ring-white/30">
                 {subItem.name}
               </span>
+              <TooltipPopup tooltipId={subItem.tooltipId} />
             </div>
           ))}
         </div>
@@ -366,17 +378,46 @@ function RoadmapCard({
   );
 }
 
+function TooltipPopup({ tooltipId }: { tooltipId?: string }) {
+  const item = tooltipId ? tooltipById[tooltipId] : undefined;
+
+  if (!item) {
+    return null;
+  }
+
+  return (
+    <div
+      data-tooltip-popup
+      className="absolute left-1/2 top-full z-[2147483647] hidden w-[min(430px,calc(100vw-4rem))] -translate-x-1/2 pt-3 text-left"
+    >
+      <ToolInfoCard item={item} />
+    </div>
+  );
+}
+
 export default function Home() {
-  const tooltipStyles = Object.keys(tooltipById)
-    .map(
-      (tooltipId) => `
-        [data-tooltip-root]:has([data-tooltip-id="${tooltipId}"]:hover) [data-tooltip-panel="${tooltipId}"],
-        [data-tooltip-root]:has([data-tooltip-panel="${tooltipId}"]:hover) [data-tooltip-panel="${tooltipId}"] {
-          display: block;
-        }
-      `,
-    )
-    .join("\n");
+  const tooltipStyles = `
+    [data-tooltip-anchor] {
+      position: relative;
+    }
+
+    [data-tooltip-anchor]:hover,
+    [data-tooltip-anchor]:focus-within {
+      z-index: 2147483646;
+    }
+
+    [data-roadmap-column]:has([data-tooltip-anchor]:hover),
+    [data-roadmap-column]:has([data-tooltip-anchor]:focus-within),
+    [data-roadmap-card]:has([data-tooltip-anchor]:hover),
+    [data-roadmap-card]:has([data-tooltip-anchor]:focus-within) {
+      z-index: 2147483645;
+    }
+
+    [data-tooltip-anchor]:hover > [data-tooltip-popup],
+    [data-tooltip-anchor]:focus-within > [data-tooltip-popup] {
+      display: block;
+    }
+  `;
 
   return (
     <main
@@ -462,11 +503,15 @@ export default function Home() {
             className="grid bg-[#f2f3f5] p-3"
             style={{
               columnGap: "24px",
-              rowGap: "22px",
+              rowGap: "12px",
               gridTemplateColumns: `22% repeat(${roadmapColumns.length}, minmax(0, 1fr))`,
+              gridTemplateRows: "48px 340px 88px 88px",
             }}
           >
-            <div className="mx-auto flex w-full max-w-[280px] flex-col items-start gap-3 text-[11px] font-semibold text-[#1247ab] sm:text-xs">
+            <div
+              className="mx-auto flex w-full max-w-[280px] flex-col items-start gap-3 text-[11px] font-semibold text-[#1247ab] sm:text-xs"
+              style={{ gridColumn: 1, gridRow: 1 }}
+            >
               <div className="flex items-center gap-2">
                 <span className="h-5 w-12 rounded-md bg-[#f3d2bc]" />
                 已开源或研发完毕
@@ -477,90 +522,148 @@ export default function Home() {
               </div>
             </div>
 
-            {roadmapColumns.map((column) => (
-              <div key={column.title} className="align-middle">
+            {roadmapColumns.map((column, columnIndex) => (
+              <div
+                key={column.title}
+                className="align-middle"
+                style={{ gridColumn: columnIndex + 2, gridRow: 1 }}
+              >
                 <div className="rounded-[14px] bg-[#1543ad] px-4 py-2.5 text-center text-lg font-semibold text-white">
                   {column.title}
                 </div>
               </div>
             ))}
 
-            <div className="mx-auto grid w-full max-w-[280px] content-start gap-3">
-              <div className="grid grid-cols-2 gap-2">
-                {riskGroups[0].items.map((item) => (
-                  <div
-                    key={item}
-                    className="flex min-h-8 items-center justify-center rounded-[10px] bg-[#d5dfef] px-2 py-1.5 text-center text-[12px] font-semibold leading-snug text-[#3f6fb8] sm:min-h-[34px] sm:text-sm"
-                  >
-                    <span>{item}</span>
-                  </div>
-                ))}
+            <div
+              className="mx-auto h-full w-full max-w-[280px] px-3"
+              style={{ gridColumn: 1, gridRow: 2 }}
+            >
+              <div className="min-h-0">
+                <div className="mb-3 flex min-h-10 items-center justify-center text-center text-2xl font-semibold tracking-tight text-[#1543ad]">
+                  风险维度
+                </div>
+                <div className="grid grid-cols-2 gap-1.5">
+                  {riskGroups[0].items.map((item) => (
+                    <div
+                      key={item}
+                      className="flex min-h-8 items-center justify-center rounded-[10px] bg-[#d5dfef] px-2 py-1 text-center text-[12px] font-semibold leading-snug text-[#3f6fb8] sm:min-h-[30px] sm:text-sm"
+                    >
+                      <span>{item}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
 
-            {roadmapColumns.map((column) => (
+            {roadmapColumns.map((column, columnIndex) => (
               <div
-                key={column.title}
-                className="flex h-full flex-col justify-between gap-2.5"
+                key={`${column.title}-frame`}
+                aria-hidden="true"
+                className="pointer-events-none rounded-[22px] border-2 border-[#efbb86] bg-[#fff4e3]/55 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.55)]"
+                style={{
+                  gridColumn: columnIndex + 2,
+                  gridRow: "2 / 4",
+                }}
+              />
+            ))}
+
+            {roadmapColumns.map((column, columnIndex) => {
+              return (
+                <div
+                  key={column.title}
+                  data-roadmap-column=""
+                  className="relative z-[1] flex min-h-0 flex-col justify-between gap-3 p-3"
+                  style={{ gridColumn: columnIndex + 2, gridRow: 2 }}
+                >
+                  {column.items.map((item, itemIndex) => (
+                    <RoadmapCard
+                      key={`${column.title}-${item.name}-${itemIndex}`}
+                      name={item.name}
+                      status={item.status}
+                      tooltipId={
+                        "id" in item && item.id && tooltipById[item.id]
+                          ? item.id
+                          : undefined
+                      }
+                      subItems={
+                        "subItems" in item
+                          ? item.subItems.map((subItem) => ({
+                              name: subItem.name,
+                              tooltipId: tooltipById[subItem.id]
+                                ? subItem.id
+                                : undefined,
+                            }))
+                          : undefined
+                      }
+                    />
+                  ))}
+                </div>
+              );
+            })}
+
+            <div
+              className="flex h-full items-center justify-center p-2.5"
+              style={{ gridColumn: 1, gridRow: 3 }}
+            >
+              <div className="flex h-full w-full items-center justify-center overflow-visible rounded-[18px] bg-[#1543ad] px-4 py-3 text-center text-sm font-semibold leading-snug tracking-tight text-white sm:text-lg">
+                {platformRows[0].lead}
+              </div>
+            </div>
+
+            {platformRows[0].items.map((platformItem, columnIndex) => (
+              <div
+                key={`${platformRows[0].lead}-${platformItem.name}`}
+                data-roadmap-column=""
+                className="relative z-[1] flex h-full items-center justify-center p-2.5"
+                style={{ gridColumn: columnIndex + 2, gridRow: 3 }}
               >
-                {column.items.map((item, itemIndex) => (
-                  <RoadmapCard
-                    key={`${column.title}-${item.name}-${itemIndex}`}
-                    name={item.name}
-                    status={item.status}
-                    tooltipId={
-                      "id" in item && item.id && tooltipById[item.id]
-                        ? item.id
-                        : undefined
-                    }
-                    subItems={
-                      "subItems" in item
-                        ? item.subItems.map((subItem) => ({
-                            name: subItem.name,
-                            tooltipId: tooltipById[subItem.id]
-                              ? subItem.id
-                              : undefined,
-                          }))
-                        : undefined
-                    }
-                  />
-                ))}
+                <div
+                  data-tooltip-id={platformItem.id}
+                  data-tooltip-anchor=""
+                  className="flex h-full w-full items-center justify-center overflow-visible rounded-[18px] bg-[#f3d2bc] px-4 py-3 text-center text-sm font-semibold leading-snug tracking-tight text-[#111827] shadow-[0_10px_24px_rgba(2,8,23,0.22)] backdrop-blur sm:text-base"
+                >
+                  <a
+                    href={platformItem.href}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex h-full w-full items-center justify-center"
+                  >
+                    {platformItem.name}
+                  </a>
+                  <TooltipPopup tooltipId={platformItem.id} />
+                </div>
               </div>
             ))}
 
-            <div className="grid gap-2.5">
-              {platformRows.map((row) => (
-                <div
-                  key={row.lead}
-                  className="flex min-h-16 items-center justify-center overflow-visible rounded-[20px] bg-[#1543ad] px-4 py-3 text-center text-sm font-semibold leading-snug tracking-tight text-white sm:min-h-[72px] sm:text-lg"
-                >
-                  {row.lead}
-                </div>
-              ))}
+            <div
+              className="flex h-full items-center justify-center p-2.5"
+              style={{ gridColumn: 1, gridRow: 4 }}
+            >
+              <div className="flex h-full w-full items-center justify-center overflow-visible rounded-[18px] bg-[#1543ad] px-4 py-3 text-center text-sm font-semibold leading-snug tracking-tight text-white sm:text-lg">
+                {platformRows[1].lead}
+              </div>
             </div>
 
-            {platformRows[0].items.map((_, itemIndex) => (
-              <div key={`platform-col-${itemIndex}`} className="grid gap-2.5">
-                {platformRows.map((row) => (
-                  <div
-                    key={`${row.lead}-${row.items[itemIndex].name}`}
-                    data-tooltip-id={row.items[itemIndex].id}
-                    className="flex min-h-16 items-center justify-center overflow-visible rounded-[20px] bg-[#f3d2bc] px-4 py-3 text-center text-sm font-semibold leading-snug tracking-tight text-[#111827] shadow-[0_10px_24px_rgba(2,8,23,0.22)] backdrop-blur sm:min-h-[72px] sm:text-base"
-                  >
-                    {row.items[itemIndex].href ? (
-                      <a
-                        href={row.items[itemIndex].href}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="flex h-full w-full items-center justify-center"
-                      >
-                        {row.items[itemIndex].name}
-                      </a>
-                    ) : (
-                      row.items[itemIndex].name
-                    )}
-                  </div>
-                ))}
+            {platformRows[1].items.map((item, itemIndex) => (
+              <div
+                key={`${platformRows[1].lead}-${item.name}-${itemIndex}`}
+                className="flex h-full items-center justify-center p-2.5"
+                style={{ gridColumn: itemIndex + 2, gridRow: 4 }}
+              >
+                <div className="flex h-full w-full items-center justify-center overflow-visible rounded-[18px] bg-[#f3d2bc] px-4 py-3 text-center text-sm font-semibold leading-snug tracking-tight text-[#111827] shadow-[0_10px_24px_rgba(2,8,23,0.22)] backdrop-blur sm:text-base">
+                  {item.href ? (
+                    <a
+                      href={item.href}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="flex h-full w-full items-center justify-center"
+                    >
+                      {item.name}
+                    </a>
+                  ) : (
+                    item.name
+                  )}
+                </div>
               </div>
             ))}
           </div>
@@ -568,17 +671,6 @@ export default function Home() {
       </div>
 
       <style>{tooltipStyles}</style>
-      <div className="fixed left-1/2 top-6 z-[2147483647] w-[min(560px,calc(100vw-4rem))] -translate-x-1/2 text-left">
-        {Object.entries(tooltipById).map(([tooltipId, item]) => (
-          <div
-            key={tooltipId}
-            data-tooltip-panel={tooltipId}
-            className="hidden"
-          >
-            <ToolInfoCard item={item} />
-          </div>
-        ))}
-      </div>
 
       <section className="grid gap-6">
         {toolboxSections.map((section) => (
