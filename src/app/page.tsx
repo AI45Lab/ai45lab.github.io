@@ -47,7 +47,7 @@ const roadmapColumns = [
     items: [
       { name: "即将发布", status: "soon" },
       { id: "dataelf", name: "DataElf 数据安全精灵", status: "active" },
-      { id: "riskdb", name: "开源智能体风险数据库", status: "active" },
+      { id: "riskdb", name: "智能体风险数据库 SATraj", status: "active" },
       { id: "unimark", name: "AI内容标识开发套件 Unimark", status: "active" },
     ],
   },
@@ -191,7 +191,7 @@ const toolboxSections = [
       },
       {
         id: "riskdb",
-        name: "开源智能体风险数据库",
+        name: "智能体风险数据库 SATraj",
         subtitle: "持续生产的数据资产",
         href: "https://huggingface.co/collections/AI45Research/safactory",
         summary:
